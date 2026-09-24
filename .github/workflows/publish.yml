@@ -1,0 +1,72 @@
+name: Publish extension
+
+# Publishes the Darkmoon VS Code extension to the VS Code Marketplace (and Open VSX)
+# straight from CI. Triggered by pushing a version tag (e.g. `v0.1.0`) or manually.
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   VSCE_PAT  — Azure DevOps Personal Access Token, scope "Marketplace > Manage",
+#               Organization: "All accessible". Create at https://dev.azure.com/  ->
+#               user settings -> Personal Access Tokens.
+#   OVSX_PAT  — (optional) Open VSX token from https://open-vsx.org/user-settings/tokens
+#               If unset, the Open VSX step is skipped.
+#
+# The `publisher` in package.json ("darkmoon") must match a publisher created at
+# https://marketplace.visualstudio.com/manage.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch: {}
+
+permissions:
+  contents: write   # to attach the built .vsix to the GitHub release
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install (self-contained — client is vendored)
+        run: npm ci
+
+      - name: Typecheck & lint
+        run: |
+          npm run typecheck
+          npm run lint
+
+      - name: Package VSIX
+        run: npx --yes @vscode/vsce package --no-dependencies -o darkmoon-vscode.vsix
+
+      - name: Publish to VS Code Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: npx --yes @vscode/vsce publish --no-dependencies --packagePath darkmoon-vscode.vsix
+
+      - name: Publish to Open VSX (optional)
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          if [ -z "$OVSX_PAT" ]; then
+            echo "OVSX_PAT not set — skipping Open VSX publish."
+            exit 0
+          fi
+          npx --yes ovsx create-namespace darkmoon -p "$OVSX_PAT" || true
+          npx --yes ovsx publish darkmoon-vscode.vsix -p "$OVSX_PAT"
+
+      - name: Attach VSIX to the GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" darkmoon-vscode.vsix --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" darkmoon-vscode.vsix \
+              --title "$GITHUB_REF_NAME" --generate-notes
+          fi

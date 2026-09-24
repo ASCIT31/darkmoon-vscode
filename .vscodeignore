@@ -13,3 +13,4 @@ eslint.config.*
 **/*.ts
 .gitignore
 .git/**
+vendor/**

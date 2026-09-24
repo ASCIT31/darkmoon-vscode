@@ -197,7 +197,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@darkmoon/client": "file:../darkmoon-client/darkmoon-client-0.1.0.tgz",
+    "@darkmoon/client": "file:vendor/darkmoon-client-0.1.0.tgz",
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.11.0",
     "@types/vscode": "^1.85.0",
