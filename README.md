@@ -13,15 +13,15 @@ Rendered from the bundled synthetic **Demo Shop** fixtures (`demo-shop.local`) w
 
 **Vulnerabilities** — filter by severity/status, free-text search and column sort:
 
-![Vulnerabilities table](docs/screenshots/vscode-vulnerabilities.png)
+![Vulnerabilities table](https://raw.githubusercontent.com/ASCIT31/darkmoon-vscode/master/docs/screenshots/vscode-vulnerabilities.png)
 
 **Finding detail (redacted by default)** — description, evidence and remediation with sensitive values masked until you explicitly reveal them on a local workbench:
 
-![Finding detail, redacted](docs/screenshots/vscode-finding-redacted.png)
+![Finding detail, redacted](https://raw.githubusercontent.com/ASCIT31/darkmoon-vscode/master/docs/screenshots/vscode-finding-redacted.png)
 
 **Finding detail (revealed)** — after the local, confirmed *Reveal real values* action:
 
-![Finding detail, revealed](docs/screenshots/vscode-finding-revealed.png)
+![Finding detail, revealed](https://raw.githubusercontent.com/ASCIT31/darkmoon-vscode/master/docs/screenshots/vscode-finding-revealed.png)
 
 ## Install
 
