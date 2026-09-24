@@ -7,6 +7,28 @@ Browse [Darkmoon](https://dark-moon.org) penetration-test **campaigns**, **vulne
 
 The extension consumes the shared `@darkmoon/client` contract, so the same UI works across versions and degrades gracefully when a capability is not available.
 
+## Install
+
+- **Marketplace:** search for **Darkmoon** in the Extensions view and click Install.
+- **From VSIX:** `code --install-extension darkmoon-vscode-0.1.0.vsix` (or Extensions view → `...` → *Install from VSIX…*).
+
+## Connect
+
+Open Settings and pick your edition with `darkmoon.mode`:
+
+- **OSS** — set `darkmoon.dataDir` to your Darkmoon settings directory (the tree that holds `campaigns/` and `vulnerabilities/`). Reports are read from `<dataDir>/reports` by default; set `darkmoon.cliPath` to `darkmoon.sh` if you want to launch campaigns from the editor.
+- **Pro** — set `darkmoon.baseUrl` to your Pro API (`https://…`, with or without `/api/v1`) and store your JWT via **Darkmoon: Set Pro API Token**.
+
+Then run **Darkmoon: Refresh**. Want a no-backend preview first? Toggle `darkmoon.dev.useFixtures` to load the bundled synthetic *Demo Shop* sample data.
+
+## Use
+
+1. **View findings** — open the **Campaigns** tree (status, overall risk, severity breakdown, agents) and the **Vulnerabilities** table (filter by severity/status, search, sort).
+2. **Open a finding** — click a row to see description, redacted evidence and remediation.
+3. **Open a report** — **Darkmoon: Open Report** shows the redacted Markdown; **Darkmoon: Open Full Report** reveals real values (local, non-remote workbench only, with a confirmation).
+
+> **CI pass/fail is not decided here.** This extension is browse-only; the findings-based fail policy (`--fail-on`) lives in the `darkmoon-ci` CLI and the CI/CD integrations (GitHub Actions, GitLab, Jenkins).
+
 ## Features
 
 - **Campaigns** — a tree of your campaigns with status, overall risk, severity breakdown, dispatched agents and their findings.
@@ -31,7 +53,7 @@ Some capabilities are Pro-only and are hidden/disabled automatically on OSS (e.g
 | --- | --- |
 | `darkmoon.mode` | `auto` \| `oss` \| `pro` |
 | `darkmoon.baseUrl` | Pro REST base URL (use `https`) |
-| `darkmoon.dataDir` | OSS artifacts directory |
+| `darkmoon.dataDir` | OSS artifacts directory (reports are read from `<dataDir>/reports`) |
 | `darkmoon.cliPath` | OSS CLI entrypoint (for launching campaigns) |
 | `darkmoon.reports.redactByDefault` | Redact sensitive values until revealed |
 | `darkmoon.dev.useFixtures` | Demo mode with bundled sample data |
@@ -49,4 +71,4 @@ npx @vscode/vsce package   # produce the .vsix
 
 ## License
 
-Proprietary — © ASC SARL. See [LICENSE](LICENSE).
+MIT © 2026 ASC-IT (SARL) / Darkmoon. See [LICENSE](LICENSE).

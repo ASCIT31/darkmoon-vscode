@@ -25,14 +25,24 @@ export type Severity = 'critical' | 'high' | 'medium' | 'low' | 'info';
 // eslint-disable-next-line @typescript-eslint/ban-types
 type AnyString = string & {};
 
-/** Real statuses seen in artifacts; kept open (string) for forward-compat. */
-export type FindingStatus = 'exploited' | 'confirmed' | 'unconfirmed' | AnyString;
+/**
+ * Canonical finding/campaign statuses from the frozen @darkmoon/client contract
+ * (CONTRACT_VERSION 1.0.0). Kept open (AnyString) for additive forward-compat,
+ * but every canonical literal is enumerated so the UI can style/filter them.
+ */
+export type FindingStatus =
+  | 'exploited'
+  | 'confirmed'
+  | 'unconfirmed'
+  | 'remediated'
+  | AnyString;
 export type CampaignStatus =
+  | 'queued'
   | 'running'
   | 'completed'
   | 'stopped'
   | 'failed'
-  | 'queued'
+  | 'unknown'
   | AnyString;
 
 /**

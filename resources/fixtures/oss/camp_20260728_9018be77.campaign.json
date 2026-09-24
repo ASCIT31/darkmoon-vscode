@@ -22,6 +22,6 @@
     "confirmed": 13,
     "unconfirmed": 0
   },
-  "report_path": "/reports/pentest_report_127.0.0.1_20260728-0801.md",
-  "executive_summary": "The OWASP Juice Shop v20.0.0 instance at http://127.0.0.1:3000 exhibits critical security vulnerabilities across multiple domains. SQL injection in the login and product search endpoints enables complete authentication bypass and full database exfiltration including all user credentials, TOTP secrets, and security answers. Mass assignment on user registration allows arbitrary admin account creation. JWT algorithm confusion (alg:none) permits forging authentication tokens for any user. DOM XSS in the search functionality chains to session hijacking. Additional high-severity findings include XXE processing, IDOR-based cross-user data access, unauthenticated product tampering, and null byte injection bypassing file access restrictions."
+  "report_path": "/reports/pentest_report_demo-shop.local_20260728-0801.md",
+  "executive_summary": "The OWASP Demo Shop v20.0.0 instance at http://demo-shop.local:8080 exhibits critical security vulnerabilities across multiple domains. SQL injection in the login and product search endpoints enables complete authentication bypass and full database exfiltration including all user credentials, TOTP secrets, and security answers. Mass assignment on user registration allows arbitrary admin account creation. JWT algorithm confusion (alg:none) permits forging authentication tokens for any user. DOM XSS in the search functionality chains to session hijacking. Additional high-severity findings include XXE processing, IDOR-based cross-user data access, unauthenticated product tampering, and null byte injection bypassing file access restrictions."
 }
