@@ -3,7 +3,7 @@
   "displayName": "Darkmoon",
   "description": "Browse Darkmoon pentest campaigns, vulnerabilities and reports (OSS CLI + Pro REST) inside VS Code.",
   "version": "0.1.0",
-  "publisher": "darkmoon",
+  "publisher": "Darkmoon",
   "license": "MIT",
   "engines": {
     "vscode": "^1.85.0"

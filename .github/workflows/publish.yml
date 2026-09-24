@@ -56,7 +56,7 @@ jobs:
             echo "OVSX_PAT not set — skipping Open VSX publish."
             exit 0
           fi
-          npx --yes ovsx create-namespace darkmoon -p "$OVSX_PAT" || true
+          npx --yes ovsx create-namespace Darkmoon -p "$OVSX_PAT" || true
           npx --yes ovsx publish darkmoon-vscode.vsix -p "$OVSX_PAT"
 
       - name: Attach VSIX to the GitHub release
