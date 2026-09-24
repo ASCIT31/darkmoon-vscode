@@ -7,6 +7,22 @@ Browse [Darkmoon](https://dark-moon.org) penetration-test **campaigns**, **vulne
 
 The extension consumes the shared `@darkmoon/client` contract, so the same UI works across versions and degrades gracefully when a capability is not available.
 
+## Screenshots
+
+Rendered from the bundled synthetic **Demo Shop** fixtures (`demo-shop.local`) with the extension's own webview HTML/CSS/JS and its real redaction logic — no mock data.
+
+**Vulnerabilities** — filter by severity/status, free-text search and column sort:
+
+![Vulnerabilities table](docs/screenshots/vscode-vulnerabilities.png)
+
+**Finding detail (redacted by default)** — description, evidence and remediation with sensitive values masked until you explicitly reveal them on a local workbench:
+
+![Finding detail, redacted](docs/screenshots/vscode-finding-redacted.png)
+
+**Finding detail (revealed)** — after the local, confirmed *Reveal real values* action:
+
+![Finding detail, revealed](docs/screenshots/vscode-finding-revealed.png)
+
 ## Install
 
 - **Marketplace:** search for **Darkmoon** in the Extensions view and click Install.
