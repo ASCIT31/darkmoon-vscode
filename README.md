@@ -5,7 +5,7 @@ Browse [Darkmoon](https://dark-moon.org) penetration-test **campaigns**, **vulne
 - **Darkmoon OSS** — reads local campaign / findings / report artifacts produced by the CLI.
 - **Darkmoon Pro** — talks to the Pro REST API.
 
-The extension consumes the shared `@darkmoon/client` contract, so the same UI works across versions and degrades gracefully when a capability is not available.
+The extension consumes the shared `@darkmoon_ai/client` contract, so the same UI works across versions and degrades gracefully when a capability is not available.
 
 ## Screenshots
 
