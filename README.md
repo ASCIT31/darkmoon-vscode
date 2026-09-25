@@ -1,5 +1,7 @@
 # Darkmoon for VS Code
 
+> **📦 Marketplace status:** Live on the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Darkmoon.darkmoon-vscode).
+
 
 ## ⭐ Darkmoon ecosystem
 
