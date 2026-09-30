@@ -11,6 +11,7 @@ import {
 } from './views/reportsView';
 import { registerCommands } from './commands';
 import { setClientFactory } from './darkmoon/clientLoader';
+import { maybeShowStarCta } from './growthCta';
 import type { CreateClient } from './darkmoon/contract';
 
 export interface DarkmoonApi {
@@ -78,6 +79,9 @@ export function activate(context: vscode.ExtensionContext): DarkmoonApi {
       }
     })
   );
+
+  // One-time, non-intrusive GitHub star CTA on first real value.
+  maybeShowStarCta(context, session);
 
   void session.refresh();
 

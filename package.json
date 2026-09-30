@@ -9,6 +9,8 @@
     "vscode": "^1.85.0"
   },
   "categories": [
+    "Testing",
+    "Linters",
     "Other"
   ],
   "keywords": [
@@ -18,6 +20,7 @@
     "darkmoon"
   ],
   "icon": "resources/icon.png",
+  "homepage": "https://github.com/ASCIT31/Dark-Moon",
   "repository": {
     "type": "git",
     "url": "https://github.com/ASCIT31/darkmoon-vscode"
@@ -181,6 +184,11 @@
           "type": "boolean",
           "default": false,
           "description": "Developer/demo mode: serve bundled sample data instead of a live Darkmoon backend."
+        },
+        "darkmoon.growthCta.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a one-time, non-intrusive prompt to star Darkmoon on GitHub after it first delivers findings in VS Code. Set to false to never show it (the DARKMOON_DISABLE_GROWTH_CTA environment variable also disables it)."
         }
       }
     }
