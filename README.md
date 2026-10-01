@@ -102,3 +102,18 @@ npx @vscode/vsce package   # produce the .vsix
 ## License
 
 MIT © 2026 ASC-IT (SARL) / Darkmoon. See [LICENSE](LICENSE).
+
+## 🎥 Video tutorial
+
+[![Watch the Darkmoon + VS Code tutorial on YouTube](https://img.youtube.com/vi/GY7YOnYpteQ/maxresdefault.jpg)](https://youtu.be/GY7YOnYpteQ)
+
+▶ **[Watch the full Darkmoon + VS Code tutorial on YouTube](https://youtu.be/GY7YOnYpteQ)** — real setup, end to end.
+
+## Darkmoon ecosystem
+
+Darkmoon is an open-source, AI-powered penetration testing platform. It runs a full autonomous assessment and this integration brings the results into your VS Code workflow.
+
+- ⭐ **Flagship (star it):** https://github.com/ASCIT31/Dark-Moon
+- 📚 **Docs:** https://docs.dark-moon.org
+- 🌐 **Website:** https://dark-moon.org
+- 🔗 **Related integrations:** [JetBrains](https://github.com/ASCIT31/darkmoon-jetbrains) · [SDK / CLI](https://github.com/ASCIT31/darkmoon-client) 
